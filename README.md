@@ -35,7 +35,7 @@
  was found to be the best model, since it had the best accuracy score.
 
 
-[View code](https://www.kaggle.com/code/oluade111/absenteeism-notebook/) on Kaggle
+[View code on Kaggle](https://www.kaggle.com/code/oluade111/absenteeism-notebook/) 
 
 
 

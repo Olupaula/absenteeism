@@ -154,9 +154,9 @@ for i in numerical_indices[1:-1]:  # indexing from 1 to -1 in order to exclude t
     plot[i] = sns.scatterplot(x=data.iloc[:, i], y=data.iloc[:, -1])
     plt.show()
 
-# From the plots, there is not a clear relationship between the numerical variables and absenteeism hours. Hence,
-# the correlation coefficients are considered.
-
+# From the plots above, it can be deduced that there is not a clear relationship between the numerical variables and
+# absenteeism hours. Hence, the correlation between numerical features and absenteeism time in hours will give a
+# clearer picture of any existing dependence.
 
 # Correlation between numerical features and absenteeism time in hours
 correlations = data.iloc[:, numerical_indices].corr().iloc[:-2, -1]
@@ -168,6 +168,11 @@ pd.set_option('display.max_columns', None)
 features_correlations = data.iloc[:, numerical_indices[1:-1]].corr()
 print('\nCorrelation among features:')
 print(features_correlations)
+# The correlations are too small and so it is better to categorize the absenteeism time in hours column (to another
+# column called absenteeism) such that each time value falls into a category, viz., 'Given to Absenteeism' which is
+# represented by 1 or 'Not Given to Absenteeism' which is represented by 0. If a time value is greater than the median
+# absenteeism time in hours, then it falls in the category 'Given to Absenteeism' else it falls in the category
+# 'Not Given to Absenteeism' as shown below
 
 # Descriptive statistic for absenteeism time in hours
 print('_'*70)
@@ -177,7 +182,6 @@ print('_'*70)
 skewness = round(data.iloc[:, -1].skew(), 4)
 print('\nSkewness =', skewness)
 # Since the skewness is greater than 1, the absenteeism time in hours is extremely positively skewed.
-
 
 # Kurtosis of absenteeism time in hours
 kurtosis = round(data.iloc[:, -1].kurtosis(), 4)
@@ -404,15 +408,16 @@ estimator.append(best_dt_estimator)
 
 
 # SUMMARY OF THE PERFORMANCES OF THE MODELS
-# The data frame for comparing the accuracy scores of the models
-print("_"*100)
 print("Summary of the Performances of the Models")
-print("_"*100)
+
+# The data frame for comparing the accuracy scores of the models
 models_and_accuracies = pd.DataFrame({"Model Name": model_name, "estimator": estimator,
                                       "Average Validation Accuracy": average_validation_accuracy,
                                       "Test Accuracy": test_accuracy})
 
 print(models_and_accuracies)
+
+# Printing the best model
 m_and_a = models_and_accuracies
 for i in range(len(models_and_accuracies)):
     if m_and_a.iloc[i, 2] == m_and_a.iloc[:, 2].max() and m_and_a.iloc[i, 3] == m_and_a.iloc[:, 3].max():

@@ -202,7 +202,7 @@ print('The new column called absenteeism:')
 print(data.loc[:, "absenteeism"])
 
 
-# 3) FEATURE SELECTION
+# FEATURE SELECTION
 y = data["absenteeism"]
 x = data.drop(labels=["Absenteeism time in hours", "absenteeism"], axis=1)
 
@@ -222,7 +222,7 @@ x = data.loc[:, feature_selector.get_feature_names_out(input_features=None)]
 # Splitting the data to train and test sets
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.20, random_state=123)
 
-# lists needed to display the accuracies of the models and save them
+# Lists needed to display the accuracies of the models and save them
 joblib_file_names = [
                 "LogisticRegression.joblib",
                 "SupportVectorMachine.joblib",
@@ -237,13 +237,12 @@ test_accuracy = []
 estimator = []  # the model with the recommended parameters after tuning
 
 
-# 4) THE MODELS
+# THE MODELS
 n_ = np.array(range(1, 10))
 cr = [10 ** n for n in n_]  # c's greater than or equal to one
 cl = [10/(10 ** n) for n in n_]  # c's less than 1
 C = cl + cr  # both c's
 C.sort()
-
 
 # (a) LOGISTIC REGRESSION MODEL (LOR)
 """
@@ -269,7 +268,7 @@ validation_scores = cross_val_score(best_lor_estimator, X=x_train, y=y_train,  c
 lor_average_validation_accuracy = round(validation_scores.mean(), 4)
 lor_test_accuracy = round(best_lor_estimator.score(x_test, y_test), 4)
 
-# output for logistic regression
+# Output for logistic regression
 print("_"*100)
 print("Output for Logistic Regression (LOR)")
 print("_"*100)
@@ -279,14 +278,12 @@ print("LOR Average validation scores = ", lor_average_validation_accuracy)
 print("LOR Test Score = ", lor_test_accuracy)
 print()
 
-# adding the logistic regression model scores to the lists above
+# Adding the logistic regression model scores to the lists above
 average_validation_accuracy.append(lor_average_validation_accuracy)
 test_accuracy.append(lor_test_accuracy)
 estimator.append(best_lor_estimator)
 
-
 # (b) SUPPORT VECTOR MACHINE (SVM)
-# The Support Vector Machine Model (SVM)
 """ 
 svc = SVC(random_state=123)
 parameters = {"C": [0.01, 10], "gamma": range(0, 2), "kernel": ["linear", "rbf"]}
@@ -300,7 +297,6 @@ clf.fit(x_train, y_train)
 best_svm_estimator = clf.best_estimator_
 """
 
-
 best_svm_estimator = SVC(C=10, gamma=1, random_state=123)
 
 # fitting the selected (best) model
@@ -311,7 +307,7 @@ svm_validation_scores = cross_val_score(best_svm_estimator, x_train, y_train, cv
 svm_average_validation_score = round(svm_validation_scores.mean(), 4)
 svm_test_accuracy = round(best_svm_estimator.score(x_test, y_test), 4)
 
-# output for svm
+# Output for svm
 print("_"*100)
 print("output for svm")
 print("_"*100)
@@ -321,15 +317,12 @@ print("SVM Validation Score = ", svm_average_validation_score)
 print("SVM Test_Accuracy", svm_test_accuracy)
 print()
 
-# adding the svm estimator and model scores to the lists above
+# Adding the svm estimator and model scores to the lists above
 average_validation_accuracy.append(svm_average_validation_score)
 test_accuracy.append(svm_test_accuracy)
 estimator.append(best_svm_estimator)
 
-
 # (c) K-NEAREST NEIGHBOUR (KNN)
-
-# The KNN model
 """
 knn_model = KNeighborsClassifier()
 parameters = {"n_neighbors": range(3, 21, 2)}
@@ -367,9 +360,7 @@ average_validation_accuracy.append(knn_average_validation_accuracy)
 test_accuracy.append(knn_test_accuracy)
 estimator.append(best_knn_estimator)
 
-
 # (d) DECISION TREE (DT)
-# The DT model
 """ 
 dt_model = DecisionTreeClassifier(random_state=123)
 parameters = {"max_depth": range(2, 20),
@@ -414,7 +405,7 @@ test_accuracy.append(dt_test_accuracy)
 estimator.append(best_dt_estimator)
 
 
-# 5) SUMMARY OF THE PERFORMANCES OF THE MODELS
+# SUMMARY OF THE PERFORMANCES OF THE MODELS
 # The data frame for comparing the accuracy scores of the models
 print("_"*100)
 print("Summary of the Performances of the Models")
@@ -435,11 +426,12 @@ for i in range(len(models_and_accuracies)):
             print(m_and_a.iloc[i, 2])
 
 
-# 6) SAVING THE MODELS
+# SAVING THE MODELS
 for i in range(len(joblib_file_names)):
     joblib.dump(estimator[i], "models/" + joblib_file_names[i])
 
-# 7) USING THE BEST MODEL FOR PREDICTION
+
+# USING THE BEST MODEL FOR PREDICTION
 # (whether workers will be given to absenteeism or not)
 file = "models/DecisionTree.joblib"
 dt_model = joblib.load(file)

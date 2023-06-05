@@ -131,8 +131,6 @@ for i in categorical_indices:
     if i == 4:
         sns.move_legend(plot[i], "lower left", bbox_to_anchor=(.4, .45))
     plt.show()
-
-
 # From the plots for the following can be deduced:
 # Infectious diseases seem to be the least reason for being absent, followed by perinatal period
 # The month of absence has 13 months and so this column should be discarded

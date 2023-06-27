@@ -13,6 +13,9 @@ from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 
+import keras
+from keras.layers import Dense
+from scikeras.wrappers import KerasClassifier
 import joblib
 
 
@@ -229,11 +232,17 @@ joblib_file_names = [
                 "LogisticRegression.joblib",
                 "SupportVectorMachine.joblib",
                 "K_NearestNeighbour.joblib",
-                "DecisionTree.joblib"
+                "DecisionTree.joblib",
+                "MultiLayerPerceptronNeuralNetwork.joblib"
 ]  # A list of the filenames of the models to be serialized by joblib.
 
 models = []  # A list of the model objects to be serialized by joblib
-model_name = ["Logistic Regression", "Support Vector Machine", "K-Nearest Neighbour", "Decision Tree"]
+model_name = ["Logistic Regression",
+              "Support Vector Machine",
+              "K-Nearest Neighbour",
+              "Decision Tree",
+              "Multi-Layer Perceptron Neural Network"]
+
 average_validation_accuracy = []
 test_accuracy = []
 estimator = []  # the model with the recommended parameters after tuning
@@ -405,6 +414,85 @@ print()
 average_validation_accuracy.append(dt_average_validation_accuracy)
 test_accuracy.append(dt_test_accuracy)
 estimator.append(best_dt_estimator)
+
+
+# (e) Multi-perceptron Neural Network
+print('Neural Network Loading...')
+
+
+def nn_model():
+    model = keras.Sequential()
+    model.add(keras.layers.BatchNormalization(input_shape=(x.shape[1],)))
+    model.add(Dense(units=len(data.index), activation='tanh'))
+    model.add(keras.layers.BatchNormalization())
+    model.add(Dense(units=len(data.index) / 5, activation='tanh'))
+    model.add(Dense(units=3, activation='softmax'))
+
+    # print(model.summary())
+
+    model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    # print(model.summary())
+
+    # model.fit(x_train, y_train, validation_split=0.2, epochs=50, batch_size=32)
+    # predicted = pd.DataFrame([np.argmax(probabilities) for probabilities in model.predict(x_test)])
+
+    # nn_validation_accuracy = model.evaluate(x_test, y_test)
+    # y_ypred = pd.DataFrame([np.asarray(predicted), y])
+    # y_ypred = np.column_stack([np.array(predicted).flatten(), y_test])
+    # print(pd.DataFrame(y_ypred))
+    return model
+
+
+'''nn_model_ = KerasClassifier(
+    model=nn_model, 
+    verbose=0,
+    optimizer='adam',
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy'],
+    random_state=123
+)
+
+batch_size = [10, 20]
+epochs = [5, 10, 20]
+parameter = dict(batch_size=batch_size, epochs=epochs)
+
+grid_search = GridSearchCV(estimator=nn_model_, param_grid=parameter, cv=5)
+grid_search.fit(x_train, y_train)
+best_nn_model = grid_search.best_estimator_'''
+
+best_nn_estimator = KerasClassifier(
+    model=nn_model,
+    verbose=0,
+    optimizer='adam',
+    epochs=20,
+    batch_size=10,
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy'],
+    random_state=123
+)
+
+best_nn_estimator.fit(x_train, y_train)
+# print(best_nn_estimator)
+
+# Evaluating the accuracy of the model
+nn_validation_scores = cross_val_score(best_nn_estimator, X=x_train, y=y_train, cv=5)
+nn_average_validation_accuracy = round(nn_validation_scores.mean(), 4)
+nn_test_accuracy = best_nn_estimator.score(x_test, y_test).round(decimals=4)
+
+# Output for the NN Model
+print("_" * 100)
+print("Output for Neural Network Model")
+print("_" * 100)
+print("The best DT Model = ", best_nn_estimator)
+print("NN Validation scores = ", nn_validation_scores.round(decimals=4))
+print("NN Average validation scores = ", nn_average_validation_accuracy)
+print("NN Test Score = ", nn_test_accuracy)
+print("_" * 100)
+
+# Adding the DT estimator and model scores to the lists above
+average_validation_accuracy.append(nn_average_validation_accuracy)
+test_accuracy.append(nn_test_accuracy)
+estimator.append(best_nn_estimator)
 
 
 # SUMMARY OF THE PERFORMANCES OF THE MODELS

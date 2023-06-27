@@ -19,7 +19,7 @@
  3. [K-Nearest Neighbor (KNN)](https://online.stat.psu.edu/stat508/lesson/k/)
  4. [Decision Tree (DT)](https://online.stat.psu.edu/stat857/node/236/)
  5. [Multi-Layer Perceptron Neural Network](https://www.researchgate.net/publication/354056558_Battle_royale_optimizer_for_training_multi-layer_perceptron)
-6. 
+
  **Packages Used**: The [Scikit-learn (sklearn)](https://scikit-learn.org/) package was used to build these models. 
  The GridSearchCV of the 
  sklearn was used to tune the parameters of these models. For each of the models, an average validation score 
